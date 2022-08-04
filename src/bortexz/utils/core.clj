@@ -29,10 +29,6 @@
        ~@body
        (recur))))
 
-(comment
-  (macroexpand-1 '(while-let [v (<! ch)] v))
-  (macroexpand-1 '(while-some [v (<! ch)] v)))
-
 (defn chain-fx!
   "Given an atom `a` and a function `f` that accepts one argument, it will swap! a new `delay` onto `a` 
    that calls `f` with `(force current-atom-val)` as argument. Then, forces the new swapped-in delay.
@@ -60,3 +56,26 @@
 (def descending-comparator
   "Descending comparator fn, inverts clojure.core/compare"
   (invert-comparator compare))
+
+(defn uncaught-exception
+  "Calls current thread's uncaught exception handler with exception `ex`. Returns nil."
+  [ex]
+  (-> (Thread/currentThread)
+      .getUncaughtExceptionHandler
+      (.uncaughtException (Thread/currentThread) ex))
+  nil)
+
+(defn set-uncaught-exception-handler!
+  "Configures uncaught exception handler to `ex-handler`, 2-arity fn that will be called with the thread
+   and the exception thrown when an uncaught exception happens.
+   See: https://stuartsierra.com/2015/05/27/clojure-uncaught-exceptions"
+  [ex-handler]
+  (Thread/setDefaultUncaughtExceptionHandler
+   (reify Thread$UncaughtExceptionHandler
+     (uncaughtException [_ thread ex]
+       (ex-handler thread ex)))))
+
+(comment
+  (set-uncaught-exception-handler! (fn [t ex] (println (.getName t) ex)))
+  (uncaught-exception (ex-info "Uncaught Exception" {}))
+  )
