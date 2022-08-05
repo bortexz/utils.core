@@ -35,7 +35,18 @@
    
    Useful to `chain` side-effects inside an atom."
   [a f]
-  (force (swap! a (fn [fx] (delay (f (force fx)))))))
+  (force
+   (swap! a (fn [fx]
+              (delay
+               (f (force fx)))))))
+
+(defn chain-fx-vals!
+  "Like [[chain-fx!]] but returns [(force <old val>) (force <new val>)]"
+  [a f]
+  (let [[o n] (swap-vals! a (fn [fx]
+                              (delay
+                               (f (force fx)))))]
+    [(force o) (force n)]))
 
 (defmacro assert-val
   "Assert and returns the value of `expr`"
