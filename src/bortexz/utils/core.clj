@@ -90,3 +90,11 @@
   (set-uncaught-exception-handler! (fn [t ex] (println (.getName t) ex)))
   (uncaught-exception (ex-info "Uncaught Exception" {}))
   )
+
+(defn throwable?
+  [x]
+  (instance? Throwable x))
+
+(defn exception? 
+  [x]
+  (instance? Exception x))

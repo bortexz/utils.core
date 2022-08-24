@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
+ 
 
+## 0.0.4 - 2022-08-24
+### Added
+- `throwable?` and `exception?` predicates.
 ## 0.0.3 - 2022-08-05
 ### Added
 - clj-kondo exports for `while-let` and `while-some`
